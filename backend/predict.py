@@ -1,73 +1,39 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const { spawn } = require("child_process");
-require("dotenv").config();
-const path = require("path");
+import sys
+import pickle
+import numpy as np
 
-const app = express();
-const PORT = process.env.PORT || 4005;
+# Load trained model
+with open("house_price_model.pkl", "rb") as file:
+    model = pickle.load(file)
 
-// Middleware
-app.use(cors({ origin: "*" }));
-app.use(bodyParser.json());
+# ✅ Load feature names
+with open("columns.pkl", "rb") as file:
+    columns = pickle.load(file)
 
-// Root Route
-app.get("/", (req, res) => {
-  res.send("✅ Server is running! Use the /predict endpoint with a POST request.");
-});
+# Read input arguments
+try:
+    total_sqft = float(sys.argv[1])
+    bhk = int(sys.argv[2])
+    bath = int(sys.argv[3])
+    location = sys.argv[4]
+except:
+    print("Error: Usage: python predict.py <total_sqft> <bhk> <bath> <location>")
+    sys.exit(1)
 
-// Debug Route for GET /predict
-app.get("/predict", (req, res) => {
-  res.send("⚠️ Use a POST request with JSON data to get predictions.");
-});
+# Create feature vector with zeros
+features = np.zeros(len(columns))
 
-// Prediction Route (POST)
-app.post("/predict", (req, res) => {
-  const { total_sqft, bhk, bath, location } = req.body;
+# Assign numerical values
+features[columns.index("total_sqft")] = total_sqft
+features[columns.index("bhk")] = bhk
+features[columns.index("bath")] = bath
 
-  if (!total_sqft || !bhk || !bath || !location) {
-    return res.status(400).json({ error: "Missing input values!" });
-  }
+# Handle location encoding
+if location in columns:
+    features[columns.index(location)] = 1
 
-  if (isNaN(total_sqft) || isNaN(bhk) || isNaN(bath)) {
-    return res.status(400).json({ error: "total_sqft, bhk, and bath must be numbers!" });
-  }
+# Convert to 2D array and predict
+features = features.reshape(1, -1)
+predicted_price = model.predict(features)[0]
 
-  // Ensure predict.py path is correct
-  const pythonScriptPath = path.resolve(__dirname, "predict.py"); // Adjusted path
-
-  const pythonProcess = spawn("python3", [
-    pythonScriptPath,
-    total_sqft,
-    bhk,
-    bath,
-    location,
-  ]);
-
-  let result = "";
-  let errorMsg = "";
-
-  pythonProcess.stdout.on("data", (data) => {
-    result += data.toString();
-  });
-
-  pythonProcess.stderr.on("data", (data) => {
-    console.error(`Python Error: ${data.toString()}`);
-    errorMsg += data.toString();
-  });
-
-  pythonProcess.on("close", (code) => {
-    if (code === 0 && result.trim()) {
-      res.json({ price: result.trim() });
-    } else {
-      console.error(`❌ Python Error: ${errorMsg}`);
-      res.status(500).json({ error: "Something went wrong with prediction!" });
-    }
-  });
-});
-
-// Start Server
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+print(predicted_price)
