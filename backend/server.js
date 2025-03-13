@@ -20,12 +20,12 @@ app.get("/", (req, res) => {
 });
 
 // Debug Route for GET /predict
-app.get("/predict", (req, res) => {
+app.get("https://housepriceprediction-backend.onrender.com//predict", (req, res) => {
   res.send("⚠️ Use a POST request with JSON data to get predictions.");
 });
 
 // Prediction Route
-app.post("/predict", (req, res) => {
+app.post("https://housepriceprediction-backend.onrender.com/predict", (req, res) => {
   const { total_sqft, bhk, bath, location } = req.body;
 
   if (!total_sqft || !bhk || !bath || !location) {
