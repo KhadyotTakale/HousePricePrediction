@@ -1,0 +1,77 @@
+body {
+  background-image: url("https://repository-images.githubusercontent.com/393690238/3509d25b-510c-4610-b1d1-ffa78bfd9360");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+}
+
+.container {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2); /* 20% transparent white */
+  padding: 30px;
+  padding-left: 200px;
+  padding-right: 200px;
+  border-radius: 15px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(10px); /* Smooth blur effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+}
+
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #7f67c7;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #7f67c7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: rgb(0, 84, 179);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
