@@ -35,7 +35,8 @@ app.post("/predict", (req, res) => {
   }
 
   // Ensure predict.py path is correct
-  const pythonScriptPath = path.join(__dirname, "backend", "predict.py");
+  const pythonScriptPath = path.join(__dirname, "predict.py");
+
 
   const pythonProcess = spawn("/usr/bin/python3", [
     pythonScriptPath,
