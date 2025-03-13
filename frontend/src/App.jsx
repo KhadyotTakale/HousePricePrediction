@@ -23,7 +23,7 @@ function App() {
     setPrice(null);
 
     try {
-      const response = await axios.post("https://housepriceprediction-backend.onrender.com", inputs);
+      const response = await axios.post("https://housepriceprediction-kbzh.onrender.com", inputs);
 
       const formattedPrice = formatPrice(parseFloat(response.data.price));
       setPrice(formattedPrice);
