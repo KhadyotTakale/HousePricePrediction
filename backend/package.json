@@ -6,15 +6,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "nod": "^0.2.0",
-    "nodemon": "^3.1.9",
-    "watch": [
-      "server.js"
-    ],
-    "ignore": [
-      "node_modules",
-      "myenv",
-      "backend/myenv"
-    ]
+    "nodemon": "^3.1.9"
   },
   "name": "backend",
   "version": "1.0.0",
