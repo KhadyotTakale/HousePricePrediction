@@ -24,7 +24,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        "https://housepriceprediction-backend.onrender.com",
+        "https://housepriceprediction-backend.onrender.com/predict",
         inputs
       );
       const formattedPrice = formatPrice(parseFloat(response.data.price));
