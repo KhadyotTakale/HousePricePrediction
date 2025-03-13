@@ -1,18 +1,16 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const { spawn } = require("child_process");
-const path = require("path");
 require("dotenv").config();
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 4005;
 
 // Middleware
-app.use(cors());
-app.use(express.json()); // ✅ No need for body-parser
-
-// Ensure correct path for Python script
-const scriptPath = path.join(__dirname, "predict.py");
+app.use(cors({ origin: "*" }));
+app.use(bodyParser.json());
 
 // Root Route
 app.get("/", (req, res) => {
@@ -20,22 +18,32 @@ app.get("/", (req, res) => {
 });
 
 // Debug Route for GET /predict
-app.get("https://housepriceprediction-backend.onrender.com//predict", (req, res) => {
+app.get("/predict", (req, res) => {
   res.send("⚠️ Use a POST request with JSON data to get predictions.");
 });
 
-// Prediction Route
-app.post("https://housepriceprediction-backend.onrender.com/predict", (req, res) => {
+// Prediction Route (POST)
+app.post("/predict", (req, res) => {
   const { total_sqft, bhk, bath, location } = req.body;
 
   if (!total_sqft || !bhk || !bath || !location) {
     return res.status(400).json({ error: "Missing input values!" });
   }
+
   if (isNaN(total_sqft) || isNaN(bhk) || isNaN(bath)) {
     return res.status(400).json({ error: "total_sqft, bhk, and bath must be numbers!" });
   }
 
-  const pythonProcess = spawn("python3", [scriptPath, total_sqft, bhk, bath, location]);
+  // Ensure predict.py path is correct
+  const pythonScriptPath = path.join(__dirname, "backend", "predict.py");
+
+  const pythonProcess = spawn("/usr/bin/python3", [
+    pythonScriptPath,
+    total_sqft,
+    bhk,
+    bath,
+    location,
+  ]);
 
   let result = "";
   let errorMsg = "";
@@ -45,8 +53,8 @@ app.post("https://housepriceprediction-backend.onrender.com/predict", (req, res)
   });
 
   pythonProcess.stderr.on("data", (data) => {
+    console.error(`Python Error: ${data.toString()}`);
     errorMsg += data.toString();
-    console.error("Python Script Error:", errorMsg); // ✅ Log errors
   });
 
   pythonProcess.on("close", (code) => {
@@ -61,5 +69,5 @@ app.post("https://housepriceprediction-backend.onrender.com/predict", (req, res)
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
