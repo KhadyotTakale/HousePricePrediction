@@ -23,11 +23,18 @@ function App() {
     setPrice(null);
 
     try {
-      const response = await axios.post("https://housepriceprediction-kbzh.onrender.com/predict"
-, inputs);
+      const response = await axios.post(
+        "https://housepriceprediction-kbzh.onrender.com/predict", 
+        inputs,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      const formattedPrice = formatPrice(parseFloat(response.data.price));
-      setPrice(formattedPrice);
+      if (response.data && response.data.price) {
+        const formattedPrice = formatPrice(parseFloat(response.data.price));
+        setPrice(formattedPrice);
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (error) {
       console.error("Error fetching prediction", error);
       setError("Failed to fetch prediction. Try again.");
@@ -50,12 +57,13 @@ function App() {
 
   return (
     <div className="container">
-      {/* <h2>House Price Prediction</h2> */}
+      <h2>House Price Prediction</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="total_sqft"
           placeholder="Enter Area (sqft)"
+          value={inputs.total_sqft}
           onChange={handleChange}
           required
         />
@@ -63,6 +71,7 @@ function App() {
           type="text"
           name="bhk"
           placeholder="Enter BHK"
+          value={inputs.bhk}
           onChange={handleChange}
           required
         />
@@ -70,6 +79,7 @@ function App() {
           type="text"
           name="bath"
           placeholder="Enter Bathrooms"
+          value={inputs.bath}
           onChange={handleChange}
           required
         />
@@ -77,6 +87,7 @@ function App() {
           type="text"
           name="location"
           placeholder="Enter Location"
+          value={inputs.location}
           onChange={handleChange}
           required
         />
@@ -89,3 +100,4 @@ function App() {
 }
 
 export default App;
+
