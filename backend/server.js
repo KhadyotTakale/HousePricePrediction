@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 4005;
 
 // Middleware
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(bodyParser.json());
 
 // Root Route
@@ -37,8 +37,7 @@ app.post("/predict", (req, res) => {
   // Ensure predict.py path is correct
   const pythonScriptPath = path.join(__dirname, "predict.py");
 
-
-  const pythonProcess = spawn("/usr/bin/python3", [
+  const pythonProcess = spawn("python3", [
     pythonScriptPath,
     total_sqft,
     bhk,
@@ -69,6 +68,6 @@ app.post("/predict", (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
