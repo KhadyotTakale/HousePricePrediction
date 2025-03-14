@@ -9,7 +9,14 @@ const app = express();
 const PORT = process.env.PORT || 4005;
 
 // Middleware
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "https://housepriceprediction-1-frontend.onrender.com", // Your frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
 app.use(bodyParser.json());
 
 // Root Route
